@@ -98,6 +98,14 @@ const myMain = async () => {
   });
 };
 
+const callCloudFunction = async (movieName) => {
+  const params =  { movie: "The Matrix" };
+  const ratings = await Parse.Cloud.run("averageStars", params);
+  console.log(`callCloudFunction ratings:`, ratings);
+  // ratings should be 4.5
+}
+
 // myMain();
 // mySaveFile();
 myJobApplication();
+callCloudFunction('The Matrix');

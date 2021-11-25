@@ -153,3 +153,93 @@ open http://localhost:4040
 // run nodejs connect to parse-serve
 node --inspect myclient/nodejs_examples.js
 ```
+#### cloud-functions, cloud-code
+```java
+// guide: https://docs.parseplatform.org/cloudcode/guide/#cloud-functions
+// make Review object on parse
+{
+  "movie": "The Matrix",
+  "stars": 5,
+  "comment": "Too bad they never made any sequels."
+}
+// http://localhost:4040/apps/MyParseplatform/api_console/js_console
+const Review = Parse.Object.extend("Review");
+const review = new Review();
+
+review.set("movie", "The Matrix");
+review.set("stars", 5);
+review.set("comment", "Too bad they never made any sequels.");
+
+review.save()
+.then((review) => {
+  // Execute any logic that should take place after the object is saved.
+  alert('New object created with objectId: ' + review.id);
+}, (error) => {
+  // Execute any logic that should take place if the save fails.
+  // error is a Parse.Error with an error code and message.
+  alert('Failed to create new object, with error code: ' + error.message);
+});
+
+// You can also call Cloud functions using the REST API:
+// request
+curl --location --request POST 'http://localhost:1337/parse/functions/averageStars' \
+--header 'X-Parse-Application-Id: AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW' \
+--header 'Content-Type: application/json' \
+--data-raw '{ "movie": "The Matrix" }'
+
+// response
+{
+    "result": 4
+}
+
+// add validation in cloud fucntion
+// login
+const user = await Parse.User.logIn('datdao', '123456');
+// Do stuff after successful login.
+console.log('Parse.User.logIn:', user);
+// call cloud code  
+const params =  { movie: "The Matrix" };
+const ratings = await Parse.Cloud.run("averageStars", params);
+console.log(`callCloudFunction ratings:`, ratings);
+
+```
+
+#### rest guide: https://docs.parseplatform.org/rest/guide/
+```java
+// login
+curl --location --request GET 'http://localhost:1337/parse/login?username=datdao&password=123456' \
+--header 'X-Parse-Application-Id: AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW' \
+--header 'X-Parse-Revocable-Session: 1' \
+--header 'Content-Type: application/x-www-form-urlencoded' \
+--data-urlencode 'username=datdao' \
+--data-urlencode 'password=123456'
+// response
+{
+    "objectId": "ZbAS5yYCQ0",
+    "foo": "bar",
+    "username": "datdao",
+    "createdAt": "2021-11-25T07:45:14.577Z",
+    "updatedAt": "2021-11-25T07:45:14.577Z",
+    "ACL": {
+        "*": {
+            "read": true
+        },
+        "ZbAS5yYCQ0": {
+            "read": true,
+            "write": true
+        }
+    },
+    "sessionToken": "r:8cbc7bf497b95810f6fc583925a82367"
+}
+// get user info
+curl -X GET \
+  -H "X-Parse-Application-Id: AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW" \
+  -H "X-Parse-Session-Token: r:8cbc7bf497b95810f6fc583925a82367" \
+  http://localhost:1337/parse/users/me
+```
+
+#### Using ParsePlatform cloud code with Typescript
+```java
+// guide: https://medium.com/@avifatal/using-parseplatform-cloud-code-with-typescript-d27ded2e5054
+npm install @types/parse --save
+```

@@ -5,6 +5,7 @@
     "start": "parse-server config.json"
   },
   "dependencies": {
-    "parse-server": "^3.9.0"
+    "@types/parse": "^2.18.13",
+    "parse-server": "^4.10.4"
   }
 }
