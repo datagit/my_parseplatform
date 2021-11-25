@@ -128,5 +128,28 @@ npm start
 // [5772] parse-server running on http://localhost:1337/parse
 
 // The parameters are as follows:
+```
 
+#### parse-dashboard
+```java
+// guide: https://github.com/parse-community/parse-dashboard
+
+// Install the dashboard from npm
+npm install -g parse-dashboard
+// parse-dashboard@3.2.1
+// You can launch the dashboard for an app with a single command by supplying an app ID, master key, URL, and name like this
+// parse-dashboard --dev --appId yourAppId --masterKey yourMasterKey --serverURL "https://example.com/parse" --appName optionalName
+
+parse-dashboard --dev --appId AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW --masterKey qKm3C8my8M34lsg3PvYdcCrYCuafcaBMjJG9uO4y --serverURL "http://localhost:1337/parse" --appName MyParseplatform
+
+// access to parse-sdashboard
+open http://localhost:4040
+```
+
+#### How to debug Node.js apps in Visual Studio Code
+```java
+// guide: https://blog.logrocket.com/how-to-debug-node-js-apps-in-visual-studio-code/
+
+// run nodejs connect to parse-serve
+node --inspect myclient/nodejs_examples.js
 ```
