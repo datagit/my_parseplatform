@@ -202,6 +202,8 @@ const params =  { movie: "The Matrix" };
 const ratings = await Parse.Cloud.run("averageStars", params);
 console.log(`callCloudFunction ratings:`, ratings);
 
+// cloud-code-context -> https://docs.parseplatform.org/js/guide/#cloud-code-context
+// using for triggert on object
 ```
 
 #### rest guide: https://docs.parseplatform.org/rest/guide/
@@ -236,6 +238,28 @@ curl -X GET \
   -H "X-Parse-Application-Id: AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW" \
   -H "X-Parse-Session-Token: r:8cbc7bf497b95810f6fc583925a82367" \
   http://localhost:1337/parse/users/me
+```
+
+#### Cloud Jobs
+```java
+// guide: https://docs.parseplatform.org/cloudcode/guide/#cloud-jobs
+// Define a Job
+Parse.Cloud.job("myJob", (request) =>  {
+  // params: passed in the job call
+  // headers: from the request that triggered the job
+  // log: the ParseServer logger passed in the request
+  // message: a function to update the status message of the job object
+  const { params, headers, log, message } = request;
+  message("I just started");
+  return doSomethingVeryLong(request);
+});
+
+// Calling jobs is done via the REST API and is protected by the master key.
+curl --location --request POST 'http://localhost:1337/parse/jobs/myJob' \
+--header 'X-Parse-Application-Id: AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW' \
+--header 'X-Parse-Master-Key: qKm3C8my8M34lsg3PvYdcCrYCuafcaBMjJG9uO4y' \
+--header 'Content-Type: application/json' \
+--data-raw '{"key1": 123}'
 ```
 
 #### Using ParsePlatform cloud code with Typescript
