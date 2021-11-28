@@ -2,7 +2,8 @@
   "name": "myparseplatform",
   "description": "parse-server for MyParseplatform",
   "scripts": {
-    "start": "parse-server config.json"
+    "start": "parse-server config.json",
+    "dev": "node app.js"
   },
   "dependencies": {
     "@types/parse": "^2.18.13",

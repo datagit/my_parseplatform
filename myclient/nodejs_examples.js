@@ -187,6 +187,24 @@ const getConfig = async () => {
   );
 };
 
+const myLiveQuery = async () => {
+  let query = new Parse.Query('People');
+  query.equalTo('name', 'Mengyan');
+  let subscription = await query.subscribe();
+
+  subscription.on('open', () => {
+    console.log('subscription opened');
+  });
+
+  subscription.on('create', (people) => {
+    console.log(people.get('name')); // This should output Mengyan
+  });
+
+  subscription.on('update', (people) => {
+    console.log(people.get('score')); // This should output 100
+  });
+};
+
 // myMain();
 // mySaveFile();
 // myJobApplication();
@@ -194,4 +212,6 @@ const getConfig = async () => {
 // makeObjectReview();
 // makeObjectPost();
 // signupUser();
-getConfig();
+// getConfig();
+
+myLiveQuery();

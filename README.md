@@ -267,3 +267,75 @@ curl --location --request POST 'http://localhost:1337/parse/jobs/myJob' \
 // guide: https://medium.com/@avifatal/using-parseplatform-cloud-code-with-typescript-d27ded2e5054
 npm install @types/parse --save
 ```
+
+#### Parseplatform livequery
+```java
+// guide: https://www.youtube.com/watch?v=R-a5dsgLXXY&list=PL-TLnxxt_AVFEOlCFBHBG_BbpaF3UX-EU&index=35
+// demo code: https://github.com/codecraft-tv/parse-server-codecraft/blob/master/index.js
+
+// app.js
+let ParseServer = require('parse-server').ParseServer;
+var api = new ParseServer({
+  appName: 'MyParseplatform',
+  databaseURI: 'mongodb://127.0.0.1:27017/parse',
+  cloud: './cloud/main.js',
+  appId: 'AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW',
+  masterKey: 'qKm3C8my8M34lsg3PvYdcCrYCuafcaBMjJG9uO4y',
+  // fileKey: 'myFileKey',
+  // push: { ... }, // See the Push wiki page
+  // filesAdapter: ...,
+  cloud: './cloud/main',
+  liveQuery: {
+    classNames: ['People'],
+    // redisURL: 'redis://localhost:6379/1'
+  },
+});
+
+var express = require('express');
+
+var app = express();
+
+// Serve the Parse API at /parse URL prefix
+app.use('/parse', api);
+
+var port = 1337;
+
+var httpServer = require('http').createServer(app);
+httpServer.listen(port, function () {
+	console.log('parse-server-example running on port ' + port + '.');
+});
+
+
+// This will enable the Live Query real-time server
+ParseServer.createLiveQueryServer(httpServer);
+
+npm run dev
+// -------------------------------------------------------------------------------
+
+// client-web: myclient/web.html
+// <script src="https://npmcdn.com/parse@3.4.0/dist/parse.js"></script>
+Parse.initialize("AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW");
+Parse.serverURL = 'http://localhost:1337/parse';
+var People = Parse.Object.extend("People");
+var query = new Parse.Query('People');
+Parse.LiveQuery.on('open', () => {
+  console.log('socket connection established');
+});
+const myDemo = async () => {
+  query.equalTo('name', 'Mengyan');
+  var subscription = await query.subscribe();
+
+  subscription.on('open', function () {
+    console.log('subscription opened');
+  });
+
+  subscription.on('create', function (people) {
+    console.log(people.get('name')); // This should output Mengyan
+  });
+
+  subscription.on('update', function (people) {
+    console.log(people.get('score')); // This should output 100
+  });
+}
+myDemo();
+```

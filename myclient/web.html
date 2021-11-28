@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="https://npmcdn.com/parse@3.4.0/dist/parse.js"></script>
+  <script>
+    Parse.initialize("AeWrrJJKMf1SWHJYMuI2ypZvIZ7QidUEfRmKT6cW");
+    //javascriptKey is required only if you have it on server.
+
+    // parser-server demo: https://github.com/codecraft-tv/parse-server-codecraft/blob/master/index.js
+    //Parse.serverURL = 'https://parse-server-codecraft-example.herokuapp.com/parse';
+    Parse.serverURL = 'http://localhost:1337/parse';
+    //Parse.liveQueryServerURL = 'ws://localhost:8080/'
+
+
+    var People = Parse.Object.extend("People");
+    var query = new Parse.Query('People');
+
+    /*
+    query.equalTo('name', 'Mengyan');
+    query.find().then(function (results) {
+      for (var i = 0; i < results.length; i++) {
+        console.log(results[i]);
+      }
+    });
+    */
+    Parse.LiveQuery.on('open', () => {
+      console.log('socket connection established');
+    });
+    const myDemo = async () => {
+      query.equalTo('name', 'Mengyan');
+      var subscription = await query.subscribe();
+
+      subscription.on('open', function () {
+        console.log('subscription opened');
+      });
+
+      subscription.on('create', function (people) {
+        console.log(people.get('name')); // This should output Mengyan
+      });
+
+      subscription.on('update', function (people) {
+        console.log(people.get('score')); // This should output 100
+      });
+    }
+    myDemo();
+
+  </script>
+</head>
+
+<body>
+  my web for parseplatform
+</body>
+
+</html>
