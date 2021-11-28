@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "@types/parse": "^2.18.13",
+    "parse-dbtool": "^1.0.2",
     "parse-server": "^4.10.4"
   }
 }

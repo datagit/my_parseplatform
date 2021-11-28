@@ -490,3 +490,46 @@ user.set("privateData", privateData);
 user.setACL(new Parse.ACL(user));
 await user.save();
 ```
+
+#### parse-dbtool
+```java
+// https://npm.io/package/parse-dbtool
+npm i parse-dbtool
+
+npx parse-dbtool --help
+// init database for test
+ENV_FILE='.env.test' npx parse-dbtool init
+// Parse DBTool v1.0.2 - Parse server tool for data migration and seeding.
+// Initialize parse-server to suport migration and seeds
+// SUCCESS  Successfully created databases folder at /Users/datdao/Developer/Code/my_parseplatform/databases
+ENV_FILE='.env.test' npx parse-dbtool migration:make create_pet
+//Parse DBTool v1.0.2 - Parse server tool for data migration and seeding.
+//SUCCESS  New migration was created at databases/migrations/20211128223944-create_pet.js
+
+ENV_FILE='.env.test' npx parse-dbtool migrate
+// Parse DBTool v1.0.2 - Parse server tool for data migration and seeding.
+// Run migration on parse-server at http://localhost:1337/parse
+//  ⠶ Migrating 20211128223944-create_pet.js
+//  ✓ Migrated  20211128223944-create_pet.js
+//  SUCCESS  Successfully run migrations.
+
+ENV_FILE='.env.test' npx parse-dbtool migration:status
+// Parse DBTool v1.0.2 - Parse server tool for data migration and seeding.
+//  ✓  up   20211128223944-create_pet.js
+
+ENV_FILE='.env.test' npx parse-dbtool migration:undo
+
+
+ENV_FILE='.env.test' npx parse-dbtool seed:make seed_pets
+// Parse DBTool v1.0.2 - Parse server tool for data migration and seeding.
+// SUCCESS  New migration was created at /Users/datdao/Developer/Code/my_parseplatform/databases/seeders/20211128224443-seed_pets.js
+
+ENV_FILE='.env.test' npx parse-dbtool seed
+// Parse DBTool v1.0.2 - Parse server tool for data migration and seeding.
+// Run seeders on parse-server at http://localhost:1337/parse
+// Run all files inside databases/seeders
+//  ⠶ Seeding 20211128224443-seed_pets.js
+//  ✓ Done    20211128224443-seed_pets.js
+// SUCCESS  Successfully run seeders.
+
+```
