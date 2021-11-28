@@ -93,5 +93,5 @@ Parse.Cloud.beforeSave(Parse.User, async (request) => {
   // code here
   // const query = new Parse.Query("Post");
   // const post = await query.get(request.object.get("post").id);
-  throw 'database failed to connect';
+  // throw 'database failed to connect';
 })

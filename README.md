@@ -1,5 +1,10 @@
 #### parseplatform
 ```java
+// parse-server-example
+// demo code from senior developer: https://github.com/codecraft-tv/parse-server-codecraft
+
+```
+```java
 Prerequisites
 
 - Node 8 or newer
@@ -310,6 +315,10 @@ httpServer.listen(port, function () {
 ParseServer.createLiveQueryServer(httpServer);
 
 npm run dev
+// client default connect to: ws://localhost:1337/parse
+// how to check server run with port by command
+sudo lsof -i -P -n | grep LISTEN
+sudo lsof -i -P -n | grep 1337
 // -------------------------------------------------------------------------------
 
 // client-web: myclient/web.html
@@ -338,4 +347,146 @@ const myDemo = async () => {
   });
 }
 myDemo();
+```
+
+### Data Replationship
+#### One-to-Many
+```java
+// Pointers or Arrays
+
+// Pointers: First, how many objects are involved in this relationship? If the “many” side of the relationship could contain a very large number (greater than 100 or so) of objects, then you have to use Pointers.
+
+// 1 User(id, name, email) -> have many times play Game(id, name, score)
+// save
+var game = new Parse.Object("Game");
+game.set("createdBy", Parse.User.current());
+// get all games
+var query = new Parse.Query("Game");
+query.equalTo("createdBy", Parse.User.current());
+// get the user who created the Game
+// say we have a Game object
+var game = ...
+// getting the user who created the Game
+var user = game.get("createdBy");
+
+// -----------------------------
+// find Game with conditon and User with condition
+const User = Parse.Object.extend("User");
+const Game = Parse.Object.extend("Game");
+const innerUserQuery = new Parse.Query(User);
+innerUserQuery.exists("foo");
+const query = new Parse.Query(Game);
+// createdBy is pointer
+query.matchesQuery("createdBy", innerUserQuery);
+const results = await query.find();
+console.log(results);
+// -----------------------------
+// Arrays:  If the number of objects is small (fewer than 100 or so), then Arrays may be more convenient, especially if you typically need to get all of the related objects (the “many” in the “one-to-many relationship”) at the same time as the parent object
+
+// 1 User(id, name, email) -> have many weapons(id, name, ...)
+// let's say we have four weapons
+var scimitar = "scimitar";
+var plasmaRifle = "plasmaRifle";
+var grenade = "grenade";
+var bunnyRabbit = "bunnyRabbit";
+
+// stick the objects in an array
+var weapons = [scimitar, plasmaRifle, grenade, bunnyRabbit];
+
+// store the weapons for the user
+var user = Parse.User.current();
+user.set("weaponsList", weapons);
+
+//get all weapons
+var weapons = Parse.User.current().get("weaponsList")
+```
+#### Many-to-Many
+```java
+// 1 Book(id, name) -> n Author(id, name, email)
+// 1 Author(id, name, email) -> n Book(id, name)
+const Author = Parse.Object.extend("Author");
+const query = new Parse.Query(Author);
+
+const author1 = await query.get("qP6CY93yyX");
+const author2 = await query.get("LpQGRFvTv6");
+const author3 = await query.get("BEDHMRYZRl");
+
+// now we create a book object
+var Book = Parse.Object.extend("Book");
+const book = new Book();
+
+book.set("name", 'book2');
+await book.save();
+
+// now let’s associate the authors with the book
+// remember, we created a "authors" relation on Book
+var relation = book.relation("authors");
+relation.add(author1);
+relation.add(author2);
+relation.add(author3);
+
+// now save the book object
+await book.save();
+// auto create new collection: _Join:authors:Book
+
+// get data
+const Book = Parse.Object.extend("Book");
+const q = new Parse.Query(Book);
+
+q.equalTo("name", "book2");
+const book = await q.first();
+
+// create a relation based on the authors key
+var relation = book.relation("authors");
+
+// generate a query based on that relation
+var query = relation.query();
+
+// now execute the query
+const results = await query.find();
+console.log(results);
+
+//------------------------------------------
+const Author = Parse.Object.extend("Author");
+const q = new Parse.Query(Author);
+
+q.equalTo("name", "Author1");
+const author = await q.first();
+
+// first we will create a query on the Book object
+var query = new Parse.Query("Book");
+
+// now we will query the authors relation to see if the author object we have
+// is contained therein
+query.equalTo("authors", author);
+
+// now execute the query
+const results = await query.find();
+console.log(results);
+```
+#### One-to-One
+```java
+// One-to-One
+// Limiting visibility of some user data. In this scenario, you would split the object in two, where one portion of the object contains data that is visible to other users, while the related object contains data that is private to the original user (and protected via ACLs).
+
+// Splitting up an object for size.
+
+var user = Parse.User.current();
+
+
+var PrivateData = Parse.Object.extend("PrivateData");
+const privateData = new PrivateData();
+
+// set pointer
+privateData.set("user", user);
+privateData.set("name", 'nguyen van a');
+privateData.set("age", 10);
+privateData.set("originEmail", 'nguyenvana@gamil.com');
+// ....
+privateData.setACL(new Parse.ACL(user));
+await privateData.save();
+
+user.set("privateData", privateData);
+user.setACL(new Parse.ACL(user));
+await user.save();
 ```
