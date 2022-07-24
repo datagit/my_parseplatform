@@ -1,4 +1,10 @@
 // Cloud Code entry point
+// TODO: config parse-dashboard write log
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+const getLogger = require('parse-server/lib/logger');
+const _logger = _interopRequireDefault(getLogger);
+console.log(_logger);
+_logger.default.info(`Create new client: DATDAO`);
 
 // Parse.Cloud.define("averageStars", async (request) => {
 //   const query = new Parse.Query("Review");
